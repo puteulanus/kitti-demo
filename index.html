@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kitti</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+<div id="kitti">
+    <el-container class="full">
+        <el-header class="bar header">
+            <router-link to="/">
+                <img style="width: 50px; margin-top: 5px; border-radius: 5px"
+                     src="http://wx1.sinaimg.cn/large/0060lm7Tly1g1ox31poprj30a80a7wej.jpg"/>
+            </router-link>
+        </el-header>
+        <el-main class="full">
+            <router-view>
+            </router-view>
+        </el-main>
+        <el-footer class="bar footer" height="100px">
+        </el-footer>
+    </el-container>
+</div>
+
+<div style="display: none" id="routes-root">
+    <el-carousel style="height: 100%">
+        <el-carousel-item v-for="bg in bgPics"
+                          :key="bg"
+                          :style="{ 'background-image' : 'url('+bg+')', backgroundPosition : 'center center' }">
+            <div style="width: 300px; margin: 250px auto auto; text-align: center; color: white; font-size: 30px">
+                <h1>DetectNetCars</h1>
+                <br/>
+                <router-link to="/upload">
+                    <el-button type="primary">Try</el-button>
+                </router-link>
+            </div>
+        </el-carousel-item>
+    </el-carousel>
+</div>
+
+<div style="display: none" id="uploadPage">
+    <div style="width: 100%">
+        <div v-show="!result" style="margin: 50px auto auto; width: 358px; height: 178px">
+            <el-upload :on-success="uploadDone"
+                       class="upload-demo" drag
+                       action="/api/upload">
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+        </div>
+        <div v-show="result" style="margin: 50px auto auto; width: 700px; height: 360px">
+            <img :src="result" style="width: 700px; height: 360px"/>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    const uploadPage = {
+        template: document.getElementById('uploadPage').innerHTML,
+        data() {
+            return {
+                result: '',
+            }
+        },
+        methods: {
+            uploadDone(res) {
+                this.result = `/api/result?token=${res.data}`;
+            }
+        }
+    };
+
+    const kitti = {
+        template: document.getElementById('routes-root').innerHTML,
+        data() {
+            return {
+                bgPics: [
+                    'http://wx1.sinaimg.cn/large/0060lm7Tly1g1ow6aojh2j31hc0u0wms.jpg',
+                    'http://wx4.sinaimg.cn/large/0060lm7Tly1g1ow87aug5j31900u0qc2.jpg',
+                    'http://wx3.sinaimg.cn/large/0060lm7Tly1g1owaxwp7aj31hc0u0gz4.jpg',
+                ],
+            }
+        },
+    };
+
+
+    const routes = [
+        {path: '/', component: kitti},
+        {path: '/upload', component: uploadPage},
+    ];
+
+    const router = new VueRouter({
+        routes
+    });
+
+    var app = new Vue({
+        router,
+        el: '#kitti',
+        data() {
+            return {};
+        },
+        methods: {}
+    }).$mount('#kitti')
+</script>
+
+<style>
+    .full, html, body, #kitti, .bg {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .bar {
+    / / background-color: #606266;
+        background-color: black;
+    }
+
+    .el-carousel__container {
+        height: 100%;
+    }
+</style>
+</body>
+</html>
