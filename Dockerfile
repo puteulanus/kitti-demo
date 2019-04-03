@@ -9,12 +9,10 @@ RUN cd /tmp && \
     ./configure && \
     make -j"$(nproc)" && \
     make install
-RUN wget -O- https://getcaddy.com | bash -s personal
 
 FROM quay.io/puteulanus/nvcaffe-cpu
 
 COPY --from=mozjpeg /opt/mozjpeg /usr/local
-COPY --from=mozjpeg /usr/local/bin/caddy /usr/local/bin/caddy
 
 RUN echo /usr/local/lib64 > /etc/ld.so.conf.d/libc64.conf && \
     ldconfig
